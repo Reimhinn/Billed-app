@@ -14,17 +14,24 @@ export default class NewBill {
     this.fileName = null
     this.billId = null
     new Logout({ document, localStorage, onNavigate })
-  }
+    console.log(window.location.pathname)
+  }  
+
   handleChangeFile = e => {
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
+    // console.log(e.target.value)
+    // console.log(e.target.value.split(/\\/))
     const fileName = filePath[filePath.length-1]
+    console.log(fileName)
+  var vFileExt=fileName.split('.').pop();
+  console.log(vFileExt)
+  if(vFileExt.toUpperCase()=="JPEG" || vFileExt.toUpperCase()=="JPG" || vFileExt.toUpperCase()=="PNG"){ 
     const formData = new FormData()
     const email = JSON.parse(localStorage.getItem("user")).email
     formData.append('file', file)
     formData.append('email', email)
-
     this.store
       .bills()
       .create({
@@ -34,11 +41,14 @@ export default class NewBill {
         }
       })
       .then(({fileUrl, key}) => {
-        console.log(fileUrl)
         this.billId = key
         this.fileUrl = fileUrl
         this.fileName = fileName
-      }).catch(error => console.error(error))
+      })}
+      else{
+        document.querySelector(".errorImage").style.display = "block"
+        document.querySelector(`input[data-testid="file"]`).value = null
+      }       
   }
   handleSubmit = e => {
     e.preventDefault()
